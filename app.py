@@ -24,4 +24,23 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
+    class DocumentInput(BaseModel):
+        question: str = Field()
+
+    loader = PyPDFLoader("data.pdf")
+    pages = loader.load_and_split()
+
+    llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-0613")
+
+    tools = []
+
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=200,
+    )
+
+    docs = text_splitter.split_documents(pages)
+
+    print(docs)
+
     return "<p>Hello, World!</p>"
